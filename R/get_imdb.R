@@ -1,7 +1,3 @@
-pacman::p_load(dplyr)
-pacman::p_load(readr)
-pacman::p_load(qs)
-
 #' Download IMDb data
 #'
 #' Downloads basics + ratings, from datasets.imdbws.com, and joins them into one dataframe

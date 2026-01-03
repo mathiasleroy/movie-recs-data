@@ -1,12 +1,14 @@
 ## REQS ---
-pacman::p_load(dplyr)
-pacman::p_load(readr)
-pacman::p_load(tidyr)
-pacman::p_load(progress)
-pacman::p_load(qs)
-pacman::p_load(httr)
-pacman::p_load(jsonlite)
-pacman::p_load(purrr)
+library(dplyr)
+library(readr)
+library(tidyr)
+library(qs)
+library(progress)
+library(httr)
+library(jsonlite)
+library(purrr)
+
+
 if (find("filter")[1] != "package:dplyr") stop("conflicts with dplyr")
 # tmdbapikey <- Sys.getenv("TMDB_API_KEY")
 # tmdbapikey <- Sys.getenv("TMDBAPIKEY")

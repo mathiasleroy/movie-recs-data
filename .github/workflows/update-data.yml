@@ -19,8 +19,14 @@ jobs:
           packages: |
             dplyr
             readr
+            tidyr
+            progress
+            httr
+            jsonlite
+            purrr
             qs
             glue
+            stringr
 
       - name: run update
         run: Rscript update-data.R
