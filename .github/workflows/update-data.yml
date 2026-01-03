@@ -1,0 +1,31 @@
+name: weekly data update
+
+on:
+  schedule:
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: qs
+
+      - name: run update
+        run: Rscript update-data.R
+
+      - name: create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: latest
+          files: data/*.qs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
