@@ -32,6 +32,8 @@ jobs:
             stringr
 
       - name: run update
+        env:
+          TMDBAPI_KEY: ${{ secrets.TMDBAPI_KEY }}
         run: Rscript update-data.R
 
       - name: create release
