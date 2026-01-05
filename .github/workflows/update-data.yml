@@ -31,6 +31,13 @@ jobs:
             glue
             stringr
 
+      - name: download previous data
+        run: |
+          mkdir -p data
+          curl -L \
+            -o data/tmdb.qs \
+            https://github.com/mathiasleroy/movie-recs-data/releases/download/latest/df_tmdb.qs || true
+
       - name: run update
         env:
           TMDBAPI_KEY: ${{ secrets.TMDBAPI_KEY }}
