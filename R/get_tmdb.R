@@ -165,9 +165,13 @@ batch_scrape_tmdb_api <- function(
     limit_to_fetch = 999999
     #
     ) {
-  # message("\n\n=== START INFINTE FETCHING TMDB ===\n")
-  # message("you can ctrl-C at any time, the qs file is saved after every batch_size\n")
+  message("- note: you can ctrl-C at any time, the qs file is saved after every batch_size\n")
   message("- batch_size: ", batch_size)
+
+  ## VALIDATION
+  if (missing(df_tofetch)) stop("Error: 'df_tofetch' argument is missing in batch_scrape_tmdb_api")
+  if (!is.data.frame(df_tofetch)) stop("Error: 'df_tofetch' must be a data frame")
+  message("- valid df_tofetch with ", nrow(df_tofetch), " rows")
 
   ## IMPORT PREVIOUS RUNS
   if (file.exists("data/df_tmdb.qs")) {
@@ -233,7 +237,6 @@ batch_scrape_tmdb_api <- function(
       select(tconst, date_release, popularity, original_language, overview, poster_path, type) %>%
       # # mutate(release_date = as.Date(release_date, format = "%Y-%m-%d")) %>%
       mutate(date_fetched = Sys.Date())
-    # df_newbatch %>% print(n = 100)
 
     if (exists("df_tmdb")) {
       df_tmdb <- bind_rows(df_tmdb, df_newbatch)
@@ -243,50 +246,49 @@ batch_scrape_tmdb_api <- function(
 
 
     df_tmdb %>% qs::qsave("data/df_tmdb.qs")
-    ## backup
-    # r <- file.copy("data/df_tmdb.qs", "data/df_tmdb_backup.qs", overwrite = T) ## in case of corruption
-    # if (!isTRUE(r)) stop("backup failed")
-  } ## this loop might never finish, can safely be interrupted with ctrl-c
+  } ## loop can safely be interrupted with ctrl-c
 }
 ## usage:
 # df_tofetch <- data.frame(tconst = c("tt21382296", "tt0059855", "tt27426266", "tt37232949", "tt24074470", "tt0944947"))
 # df_tofetch %>% batch_scrape_tmdb_api(limit_to_fetch = 100)
-df_tofetch %>% batch_scrape_tmdb_api()
-
-
-# ## make manual changes to df_tmdb
-if (0) {
-  df_tmdb <- qs::qread("data/df_tmdb.qs")
-
-  # # df_tmdb <- df_tmdb %>% mutate(type = coalesce(type, "movie"))
-  df_tmdb <-
-    df_tmdb %>%
-    left_join(df_imdb_sm %>% select(tconst, titleType), by = "tconst") %>%
-    mutate(type = recode(titleType, "movie" = "movie", "tvSeries" = "tv", "tvMiniSeries" = "tv")) %>%
-    select(-titleType)
-
-  df_tmdb %>% count(type)
-  # df_tmdb <- df_tmdb %>% mutate(date_release = coalesce(date_release, release_date))
-  # df_tmdb %>% count(date_release, sort = T)
-  # df_tmdb <- df_tmdb %>% select(-release_date)
-  df_tmdb %>% qs::qsave("data/df_tmdb.qs")
-}
+# df_tofetch %>% batch_scrape_tmdb_api()
 
 
 
 
+# # ## make manual changes to df_tmdb
+# if (0) {
+#   df_tmdb <- qs::qread("data/df_tmdb.qs")
+
+#   # # df_tmdb <- df_tmdb %>% mutate(type = coalesce(type, "movie"))
+#   df_tmdb <-
+#     df_tmdb %>%
+#     left_join(df_imdb_sm %>% select(tconst, titleType), by = "tconst") %>%
+#     mutate(type = recode(titleType, "movie" = "movie", "tvSeries" = "tv", "tvMiniSeries" = "tv")) %>%
+#     select(-titleType)
+
+#   df_tmdb %>% count(type)
+#   # df_tmdb <- df_tmdb %>% mutate(date_release = coalesce(date_release, release_date))
+#   # df_tmdb %>% count(date_release, sort = T)
+#   # df_tmdb <- df_tmdb %>% select(-release_date)
+#   df_tmdb %>% qs::qsave("data/df_tmdb.qs")
+# }
 
 
 
-check_tmdb <- function() {
-  df_tmdb <- qs::qread("data/df_tmdb.qs")
-  df_tmdb %>% arrange(popularity |> desc())
 
-  message("- loaded ", nrow(df_tmdb), " tmdb movies")
-  df_tmdb %>%
-    count(type, sort = T) %>%
-    print()
-  df_tmdb$date_release %>% range(na.rm = T)
-}
-## usage:
-# check_tmdb()
+
+
+
+# check_tmdb <- function() {
+#   df_tmdb <- qs::qread("data/df_tmdb.qs")
+#   df_tmdb %>% arrange(popularity |> desc())
+
+#   message("- loaded ", nrow(df_tmdb), " tmdb movies")
+#   df_tmdb %>%
+#     count(type, sort = T) %>%
+#     print()
+#   df_tmdb$date_release %>% range(na.rm = T)
+# }
+# ## usage:
+# # check_tmdb()

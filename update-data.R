@@ -39,6 +39,10 @@ if (do_use == "recs" & file.exists("data/df_recs.qs")) {
     select(tconst, numVotes)
   if (do_reverse) df_tofetch <- df_tofetch %>% arrange(numVotes)
 }
+
+if (!exists("df_tofetch")) stop("Error: df_tofetch was not created.")
+if (!is.data.frame(df_tofetch)) stop("Error: df_tofetch is not a data frame.")
+
 batch_scrape_tmdb_api(df_tofetch, limit_to_fetch = maxtofetch)
 
 
