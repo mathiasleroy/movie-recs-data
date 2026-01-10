@@ -63,31 +63,42 @@ load_movielens <- function(force_update = FALSE) {
 
 
     ## SUBSET ---
+    message(nrow(df_movielens))
     {
       ## df_movielens is too large
       # df_movielens %>% count(userId) %>% arrange(n) # min is 20
       # df_movielens %>% count(imdbId) %>% arrange(n) # min is 1
-      min_n <- 50
+      min_n <- 100
       df_ml_sm <- df_movielens
-      for (i in 1:3) { ## 3 passes
+      n <- nrow(df_ml_sm)
+      # iii <- 1
+      actualmin_n <- min(
+        df_ml_sm %>% count(imdbId) %>% pull(n) %>% min(),
+        df_ml_sm %>% count(userId) %>% pull(n) %>% min()
+      )
+      # for (iii in 1:3) { ## 3 passes
+      while (actualmin_n < min_n) {
+        print(actualmin_n)
         df_ml_sm <- df_ml_sm %>% filter(.by = imdbId, n() >= min_n)
         df_ml_sm <- df_ml_sm %>% filter(.by = userId, n() >= min_n)
+
+        actualmin_n <- min(
+          df_ml_sm %>% count(imdbId) %>% pull(n) %>% min(),
+          df_ml_sm %>% count(userId) %>% pull(n) %>% min()
+        )
       }
-      # df_ml_sm %>% count(imdbId) %>% arrange(n)
-      # df_ml_sm %>% count(userId) %>% arrange(n)
-
-      df_movielens <- df_ml_sm
     }
+    message(nrow(df_ml_sm))
 
-    df_movielens %>% qs::qsave(fname_qs)
-    message("- saved ", nrow(df_movielens), " movielens ratings in ", fname_qs)
-    # df_ml_sm %>% qs::qsave("data/df_ml_sm.qs") ## 78MB
+    df_ml_sm %>% qs::qsave(fname_qs)
+    message("- saved ", nrow(df_ml_sm), " movielens ratings in ", fname_qs)
   }
 
   # message("- loaded ", nrow(df_movielens), " movielens ratings")
   # return(df_movielens)
 }
-# df_movielens <- load_movielens()
+load_movielens()
+df_movielens <- qs::qread("data/df_movielens.qs")
 
 # > glimpse(ml.links, 0)
 # Rows: 87,585
