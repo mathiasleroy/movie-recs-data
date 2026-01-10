@@ -24,12 +24,14 @@ message("## 2. data/df_movielens.qs ---")
 load_movielens()
 
 message("## 3. data/df_tmdb.qs ---")
+do_use <- "recs"
 do_use <- "imdb"
 do_reverse <- 0
 maxtofetch <- 200
-if (do_use == "recs" & file.exists("data/df_recs.qs")) {
+fname_recs <- "../movie-recs/out/df_recs.qs"
+if (do_use == "recs" & file.exists(fname_recs)) {
   message("- use recs")
-  df_tofetch <- qs::qread("data/df_recs.qs")
+  df_tofetch <- qs::qread(fname_recs)
   if (do_reverse) df_tofetch <- df_tofetch %>% arrange(rating)
 } else {
   message("- use imdb")
