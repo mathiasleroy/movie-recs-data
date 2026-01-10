@@ -90,7 +90,7 @@ load_movielens <- function(force_update = FALSE) {
     }
     message(nrow(df_ml_sm))
 
-
+    ## optimise col types
     df_ml_sm <- df_ml_sm |>
       mutate(
         # Save 50% memory per column (4 bytes vs 8 bytes)
@@ -100,6 +100,7 @@ load_movielens <- function(force_update = FALSE) {
         # Save massive memory by removing string overhead
         # You can add leading zeros back later with sprintf("%07d", imdbId)
         # imdbId = as.integer(imdbId)
+        imdbId = as.factor(imdbId)
       )
 
     df_ml_sm %>% qs::qsave(fname_qs)
@@ -109,8 +110,9 @@ load_movielens <- function(force_update = FALSE) {
   # message("- loaded ", nrow(df_movielens), " movielens ratings")
   # return(df_movielens)
 }
-load_movielens()
-df_movielens <- qs::qread("data/df_movielens.qs")
+# load_movielens()
+# df_movielens <- qs::qread("data/df_movielens.qs")
+# mem()
 
 # > glimpse(ml.links, 0)
 # Rows: 87,585
