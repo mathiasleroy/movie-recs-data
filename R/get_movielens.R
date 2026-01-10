@@ -90,6 +90,18 @@ load_movielens <- function(force_update = FALSE) {
     }
     message(nrow(df_ml_sm))
 
+
+    df_ml_sm <- df_ml_sm |>
+      mutate(
+        # Save 50% memory per column (4 bytes vs 8 bytes)
+        userId = as.integer(userId),
+        rating = as.integer(rating),
+
+        # Save massive memory by removing string overhead
+        # You can add leading zeros back later with sprintf("%07d", imdbId)
+        # imdbId = as.integer(imdbId)
+      )
+
     df_ml_sm %>% qs::qsave(fname_qs)
     message("- saved ", nrow(df_ml_sm), " movielens ratings in ", fname_qs)
   }
