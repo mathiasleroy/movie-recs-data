@@ -68,7 +68,7 @@ load_movielens <- function(force_update = FALSE) {
       ## df_movielens is too large
       # df_movielens %>% count(userId) %>% arrange(n) # min is 20
       # df_movielens %>% count(imdbId) %>% arrange(n) # min is 1
-      min_n <- 100
+      min_n <- 150
       df_ml_sm <- df_movielens
       n <- nrow(df_ml_sm)
       # iii <- 1
